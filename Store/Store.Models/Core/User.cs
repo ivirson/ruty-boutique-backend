@@ -1,21 +1,28 @@
 ﻿using Store.Models.Enums;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Store.Models.Domain
+namespace Store.Models.Core
 {
-    public class Category
+    public class User
     {
-        public Category(string name, string color)
+        public User(string name, string surname, string email, string password)
         {
             Name = name;
-            Color = color;
+            Surname = surname;
+            Email = email;
+            Password = password;
             Status = StatusEnum.ACTIVE;
         }
 
         // PROPERTIES
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public string Color { get; private set; }
+        public string Surname { get; private set; }
+        public string Email { get; private set; }
+        public string Password { get; private set; }
+        public UserProfileEnum Profile { get; private set; }
         public StatusEnum Status { get; private set; }
 
         // METHODS
