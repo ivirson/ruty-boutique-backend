@@ -10,12 +10,5 @@
             </summary>
             <returns>Returns the Product list</returns>
         </member>
-        <member name="M:Store.API.Controllers.ProductsController.GetProduct(System.Int32)">
-            <summary>
-            Get an specific Product from an Id
-            </summary>
-            <param name="id">Product Id</param>
-            <returns>Return an specific Product with Id equals to id parameter</returns>
-        </member>
     </members>
 </doc>

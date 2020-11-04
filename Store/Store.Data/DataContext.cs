@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Store.API.Data.Configurations;
+using Microsoft.Extensions.Configuration;
+using Store.Data.Configuration;
 using Store.Models.Audit;
 using Store.Models.Core;
 using Store.Models.Domain;
 
-namespace Store.API.Data
+namespace Store.Data
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options)
-               : base(options)
-        {
+        public DataContext() : base() { }
 
-        }
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -25,6 +24,11 @@ namespace Store.API.Data
         {
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new ProductCategoryConfiguration());
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=StoreDB;Trusted_Connection=True;");
         }
     }
 }

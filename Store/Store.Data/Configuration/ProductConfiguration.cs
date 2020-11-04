@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Store.Models.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Store.API.Data.Configurations
+namespace Store.Data.Configuration
 {
     public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
