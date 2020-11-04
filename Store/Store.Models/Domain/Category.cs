@@ -1,5 +1,6 @@
 ﻿using Store.Models.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace Store.Models.Domain
 {
@@ -16,6 +17,7 @@ namespace Store.Models.Domain
         public int Id { get; private set; }
         public string Name { get; private set; }
         public string Color { get; private set; }
+        public List<ProductCategory> Products { get; private set; }
         public StatusEnum Status { get; private set; }
 
         // METHODS

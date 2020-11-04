@@ -15,7 +15,7 @@ namespace Store.Models.Domain
             Qty = qty;
             Color = color;
             Status = StatusEnum.ACTIVE;
-            Categories = new List<Category>();
+            Categories = new List<ProductCategory>();
             Ratings = new List<ProductRating>();
             Log = new List<ProductLog>();
         }
@@ -28,7 +28,7 @@ namespace Store.Models.Domain
         public int Qty { get; set; }
         public string Color { get; private set; }
         public StatusEnum Status { get; private set; }
-        public List<Category> Categories { get; private set; }
+        public List<ProductCategory> Categories { get; private set; }
         public List<ProductRating> Ratings { get; private set; }
         public List<ProductLog> Log { get; private set; }
 
