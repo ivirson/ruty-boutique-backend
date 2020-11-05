@@ -20,6 +20,7 @@ namespace Store.Data
         public DbSet<ProductRating> ProductRatings { get; set; }
         public DbSet<ProductLog> ProductLogs { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
+        public DbSet<ProductSize> ProductSizes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

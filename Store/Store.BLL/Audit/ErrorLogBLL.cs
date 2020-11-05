@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Store.BLL.Domain
+namespace Store.BLL.Audit
 {
     public class ErrorLogBLL
     {

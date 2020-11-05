@@ -7,14 +7,14 @@ namespace Store.Models.Domain
 {
     public class Product
     {
-        public Product(string name, string description, decimal price, int qty, string color)
+        public Product(string name, string description, decimal price, string color)
         {
             Name = name;
             Description = description;
             Price = price;
-            Qty = qty;
             Color = color;
             Status = StatusEnum.ACTIVE;
+            Sizes = new List<ProductSize>();
             Categories = new List<ProductCategory>();
             Ratings = new List<ProductRating>();
             Log = new List<ProductLog>();
@@ -25,8 +25,8 @@ namespace Store.Models.Domain
         public string Name { get; private set; }
         public string Description { get; private set; }
         public decimal Price { get; private set; }
-        public int Qty { get; set; }
         public string Color { get; private set; }
+        public List<ProductSize> Sizes { get; private set; }
         public StatusEnum Status { get; private set; }
         public List<ProductCategory> Categories { get; private set; }
         public List<ProductRating> Ratings { get; private set; }
@@ -49,11 +49,6 @@ namespace Store.Models.Domain
                 throw new Exception("Estado invalido.");
             }
             Status = StatusEnum.ACTIVE;
-        }
-
-        public void UpdateQty(int qty)
-        {
-            Qty = qty;
         }
     }
 }

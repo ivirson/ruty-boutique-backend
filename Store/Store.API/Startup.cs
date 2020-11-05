@@ -1,12 +1,16 @@
 using System;
 using System.IO;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
+using Store.API.ViewModels;
+using Store.BLL.Audit;
 using Store.BLL.Domain;
 using Store.Data;
+using Store.Models.Domain;
 
 namespace Store.API
 {
@@ -49,6 +53,9 @@ namespace Store.API
             services.AddScoped<DataContext>();
             services.AddScoped<ProductsBLL>();
             services.AddScoped<ErrorLogBLL>();
+            services.AddScoped<ProductLogBLL>();
+
+            AutoMapperConfig(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +82,19 @@ namespace Store.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ruty Boutique");
             });
+        }
+
+        public void AutoMapperConfig(IServiceCollection services)
+        {
+            var mapperConfiguration = new MapperConfiguration(config =>
+            {
+                config.CreateMap<Product, ProductViewModel>();
+                config.CreateMap<Category, CategoryViewModel>();
+                config.CreateMap<ProductSize, ProductSizeViewModel>();
+            });
+
+            IMapper mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton(mapper);
         }
     }
 }

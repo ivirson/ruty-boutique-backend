@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Store.API.ViewModels;
 using Store.BLL.Domain;
 using Store.Models.Domain;
 
@@ -12,10 +14,12 @@ namespace Store.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ProductsBLL _productsBLL;
+        private readonly IMapper _mapper;
 
-        public ProductsController(ProductsBLL productsBLL)
+        public ProductsController(ProductsBLL productsBLL, IMapper mapper)
         {
             _productsBLL = productsBLL;
+            _mapper = mapper;
         }
 
         // GET: api/Products
@@ -24,10 +28,17 @@ namespace Store.API.Controllers
         /// </summary>
         /// <returns>Returns the Product list</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<List<ProductViewModel>>> GetProducts()
         {
             var products = await _productsBLL.GetProducts();
-            return products;
+            var productsViewModel = _mapper.Map<List<ProductViewModel>>(products);
+
+            foreach (var item in productsViewModel)
+            {
+                item.Categories = _mapper.Map<List<CategoryViewModel>>(item.Categories);
+                item.Sizes = _mapper.Map<List<ProductSizeViewModel>>(item.Sizes);
+            }
+            return productsViewModel;
         }
 
         // GET: api/Products/5

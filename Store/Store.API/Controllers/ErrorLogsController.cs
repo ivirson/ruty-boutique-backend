@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Store.BLL.Domain;
+using Store.BLL.Audit;
 using Store.Models.Audit;
 
 namespace Store.API.Controllers

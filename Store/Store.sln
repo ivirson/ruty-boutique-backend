@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.API", "Store.API\Stor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.Models", "Store.Models\Store.Models.csproj", "{697C9559-D0E5-4914-BAD4-DE3F94332435}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.BLL", "Store.BLL\Store.BLL.csproj", "{2F7E0FFA-3C09-4F91-8B9B-E8DABF0217FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.BLL", "Store.BLL\Store.BLL.csproj", "{2F7E0FFA-3C09-4F91-8B9B-E8DABF0217FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.Data", "Store.Data\Store.Data.csproj", "{724E82A3-A5C5-4843-88B0-7A8D4AB40AC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.Data", "Store.Data\Store.Data.csproj", "{724E82A3-A5C5-4843-88B0-7A8D4AB40AC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

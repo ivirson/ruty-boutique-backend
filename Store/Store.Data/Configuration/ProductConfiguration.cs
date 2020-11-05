@@ -22,6 +22,12 @@ namespace Store.Data.Configuration
                .WithOne(pl => pl.Product)
                .HasForeignKey(pl => pl.ProductId)
                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+               .HasMany(p => p.Sizes)
+               .WithOne(ps => ps.Product)
+               .HasForeignKey(ps => ps.ProductId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
