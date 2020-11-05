@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Store.BLL.Domain;
 using Store.Models.Domain;
 
@@ -30,87 +31,91 @@ namespace Store.API.Controllers
         }
 
         // GET: api/Products/5
-        ///// <summary>
-        ///// Get an specific Product from an Id
-        ///// </summary>
-        ///// <param name="id">Product Id</param>
-        ///// <returns>Return an specific Product with Id equals to id parameter</returns>
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Product>> GetProduct(int id)
-        //{
-        //    var product = await _context.Products.FindAsync(id);
+        /// <summary>
+        /// Get an specific Product from an Id
+        /// </summary>
+        /// <param name="id">Product Id</param>
+        /// <returns>Return an specific Product with Id equals to id parameter</returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
+        {
+            var product = await _productsBLL.GetProductById(id);
 
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-        //    return product;
-        //}
+            return product;
+        }
 
-        //// PUT: api/Products/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for
-        //// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutProduct(int id, Product product)
-        //{
-        //    if (id != product.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        // PUT: api/Products/5
+        /// <summary>
+        /// Updating Product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct(int id, Product product)
+        {
+            if (id != product.Id)
+            {
+                return BadRequest();
+            }
 
-        //    _context.Entry(product).State = EntityState.Modified;
+            try
+            {
+                _productsBLL.UpdateProduct(product);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(id))
+                {
+                    return NotFound();
+                }
+            }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ProductExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            return NoContent();
+        }
 
-        //    return NoContent();
-        //}
+        // POST: api/Products
+        /// <summary>
+        /// Create a new Product into a database
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>Return the created product</returns>
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct(Product product)
+        {
+            _productsBLL.CreateProduct(product);
 
-        //// POST: api/Products
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for
-        //// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        //[HttpPost]
-        //public async Task<ActionResult<Product>> PostProduct(Product product)
-        //{
-        //    _context.Products.Add(product);
-        //    await _context.SaveChangesAsync();
+            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+        }
 
-        //    return CreatedAtAction("GetProduct", new { id = product.Id }, product);
-        //}
+        // DELETE: api/Products/5
+        /// <summary>
+        /// Logic deletion of a product (set as inactive)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Return the inactivated product</returns>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        {
+            var product = await _productsBLL.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-        //// DELETE: api/Products/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Product>> DeleteProduct(int id)
-        //{
-        //    var product = await _context.Products.FindAsync(id);
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
+            _productsBLL.DeleteProduct(product);
 
-        //    _context.Products.Remove(product);
-        //    await _context.SaveChangesAsync();
+            return product;
+        }
 
-        //    return product;
-        //}
-
-        //private bool ProductExists(int id)
-        //{
-        //    return _context.Products.Any(e => e.Id == id);
-        //}
+        private bool ProductExists(int id)
+        {
+            return _productsBLL.GetProductById(id) != null ? true : false;
+        }
     }
 }
