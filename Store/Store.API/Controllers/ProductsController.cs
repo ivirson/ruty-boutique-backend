@@ -3,6 +3,7 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Store.API.InputModels;
 using Store.API.ViewModels;
 using Store.BLL.Domain;
 using Store.Models.Domain;
@@ -70,18 +71,19 @@ namespace Store.API.Controllers
         /// Updating Product
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="product"></param>
+        /// <param name="productInputModel"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult PutProduct(int id, Product product)
+        public IActionResult PutProduct(int id, ProductInputModel productInputModel)
         {
-            if (id != product.Id)
+            if (id != productInputModel.Id)
             {
                 return BadRequest();
             }
 
             try
             {
+                var product = _mapper.Map<ProductInputModel, Product>(productInputModel);
                 _productsBLL.UpdateProduct(product);
             }
             catch (DbUpdateConcurrencyException)
@@ -92,18 +94,19 @@ namespace Store.API.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetProduct", new { id = productInputModel.Id }, productInputModel);
         }
 
         // POST: api/Products
         /// <summary>
         /// Create a new Product into a database
         /// </summary>
-        /// <param name="product"></param>
+        /// <param name="productInputModel"></param>
         /// <returns>Return the created product</returns>
         [HttpPost]
-        public IActionResult PostProduct(Product product)
+        public IActionResult PostProduct(ProductInputModel productInputModel)
         {
+            var product = _mapper.Map<ProductInputModel, Product>(productInputModel);
             _productsBLL.CreateProduct(product);
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
@@ -114,7 +117,7 @@ namespace Store.API.Controllers
         /// Logic deletion of a product (set as inactive)
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>Return the inactivated product</returns>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id)
         {
@@ -126,12 +129,12 @@ namespace Store.API.Controllers
 
             _productsBLL.DeleteProduct(product);
 
-            return Ok(product);
+            return Ok();
         }
 
         private bool ProductExists(int id)
         {
-            return _productsBLL.GetProductById(id) != null ? true : false;
+            return _productsBLL.GetProductById(id) != null;
         }
     }
 }

@@ -23,19 +23,19 @@
             <param name="id">Product Id</param>
             <returns>Return an specific Product with Id equals to id parameter</returns>
         </member>
-        <member name="M:Store.API.Controllers.ProductsController.PutProduct(System.Int32,Store.Models.Domain.Product)">
+        <member name="M:Store.API.Controllers.ProductsController.PutProduct(System.Int32,Store.API.InputModels.ProductInputModel)">
             <summary>
             Updating Product
             </summary>
             <param name="id"></param>
-            <param name="product"></param>
+            <param name="productInputModel"></param>
             <returns></returns>
         </member>
-        <member name="M:Store.API.Controllers.ProductsController.PostProduct(Store.Models.Domain.Product)">
+        <member name="M:Store.API.Controllers.ProductsController.PostProduct(Store.API.InputModels.ProductInputModel)">
             <summary>
             Create a new Product into a database
             </summary>
-            <param name="product"></param>
+            <param name="productInputModel"></param>
             <returns>Return the created product</returns>
         </member>
         <member name="M:Store.API.Controllers.ProductsController.DeleteProduct(System.Int32)">
@@ -43,7 +43,7 @@
             Logic deletion of a product (set as inactive)
             </summary>
             <param name="id"></param>
-            <returns>Return the inactivated product</returns>
+            <returns></returns>
         </member>
     </members>
 </doc>

@@ -2,6 +2,8 @@
 {
     public class ProductSizeViewModel
     {
+        public ProductSizeViewModel() { }
+
         public ProductSizeViewModel(string size, int qty)
         {
             Size = size;

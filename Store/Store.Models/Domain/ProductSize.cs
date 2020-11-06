@@ -4,6 +4,7 @@ namespace Store.Models.Domain
 {
     public class ProductSize
     {
+        public ProductSize() { }
         public ProductSize(int productId, string size, int qty)
         {
             ProductId = productId;

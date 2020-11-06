@@ -68,9 +68,12 @@ namespace Store.BLL.Domain
                     .Where(p => p.Status == StatusEnum.ACTIVE)
                     .SingleOrDefault(p => p.Id == id);
 
-                foreach (var item in product.Categories)
+                if (product != null)
                 {
-                    item.Category = _categoryBLL.GetCategoryById(item.CategoryId);
+                    foreach (var item in product.Categories)
+                    {
+                        item.Category = _categoryBLL.GetCategoryById(item.CategoryId);
+                    }
                 }
             }
             catch (Exception ex)
@@ -102,6 +105,8 @@ namespace Store.BLL.Domain
         public void UpdateProduct(Product product)
         {
             var userId = 1;
+            //var previousProduct = GetProductById(product.Id);
+            //previousProduct = 
             _context.Entry(product).State = EntityState.Modified;
 
             try

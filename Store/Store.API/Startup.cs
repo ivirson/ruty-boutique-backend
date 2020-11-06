@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
+using Store.API.InputModels;
 using Store.API.ViewModels;
 using Store.BLL.Audit;
 using Store.BLL.Domain;
@@ -89,18 +90,15 @@ namespace Store.API
         {
             var mapperConfiguration = new MapperConfiguration(config =>
             {
-                config.CreateMap<Product, ProductViewModel>()
-                    .ForMember(
-                        dest => dest.Categories,
-                        opt => opt.MapFrom(src => src.Categories)
-                    )
-                    .ForMember(
-                        dest => dest.Sizes,
-                        opt => opt.MapFrom(src => src.Sizes)
-                    );
+                config.CreateMap<Product, ProductViewModel>();
                 config.CreateMap<Category, CategoryViewModel>();
                 config.CreateMap<ProductCategory, ProductCategoryViewModel>();
                 config.CreateMap<ProductSize, ProductSizeViewModel>();
+
+                config.CreateMap<ProductInputModel, Product>();
+                config.CreateMap<ProductCategoryInputModel, ProductCategory>();
+                config.CreateMap<CategoryInputModel, Category>();
+                config.CreateMap<ProductSizeViewModel, ProductSize>();
             });
 
             IMapper mapper = mapperConfiguration.CreateMapper();
