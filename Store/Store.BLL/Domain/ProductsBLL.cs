@@ -39,13 +39,11 @@ namespace Store.BLL.Domain
                     .Where(p => p.Status == StatusEnum.ACTIVE)
                     .ToList();
 
-                foreach (var item in products)
-                {
-                    foreach (var categ in item.Categories)
-                    {
-                        categ.Category = _categoryBLL.GetCategoryById(categ.CategoryId);
-                    }
-                }
+                products.ForEach(
+                    p => p.Categories.ForEach(
+                        c => c.Category = _categoryBLL.GetCategoryById(c.CategoryId)
+                    )
+                );
             }
             catch (Exception ex)
             {
@@ -70,10 +68,9 @@ namespace Store.BLL.Domain
 
                 if (product != null)
                 {
-                    foreach (var item in product.Categories)
-                    {
-                        item.Category = _categoryBLL.GetCategoryById(item.CategoryId);
-                    }
+                    product.Categories.ForEach(
+                        c => c.Category = _categoryBLL.GetCategoryById(c.CategoryId)
+                    );
                 }
             }
             catch (Exception ex)
