@@ -86,6 +86,7 @@ namespace Store.BLL.Domain
             var userId = 1;
             try
             {
+                product.ProductCode = GenerateProductCode(product);
                 _context.Products.Add(product);
                 _context.SaveChanges();
                 _actionLogBLL.CreateLogEvent(
@@ -134,6 +135,31 @@ namespace Store.BLL.Domain
             {
                 _errorLogBLL.CreateErrorLogEvent(ex, new StackTrace(1, false).GetFrame(0).GetMethod());
             }
+        }
+
+        public string GenerateProductCode(Product product)
+        {
+            var str = "";
+            try
+            {
+                var random = new Random();
+                str = string.Concat(
+                    _categoryBLL.GetCategoryById(product.Categories.FirstOrDefault().CategoryId).Name.Substring(0, 3).ToUpper(),
+                    DateTime.Now.Year,
+                    random.Next(1000000, 9999999)
+                );
+            }
+            catch (Exception ex)
+            {
+                _errorLogBLL.CreateErrorLogEvent(ex, new StackTrace(1, false).GetFrame(0).GetMethod());
+            }
+            return str;
+        }
+
+        public bool ProductExists(int id)
+        {
+            var product = _context.Products.SingleOrDefault(p => p.Id == id);
+            return product != null;
         }
     }
 }

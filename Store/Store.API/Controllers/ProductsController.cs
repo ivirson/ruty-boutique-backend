@@ -34,7 +34,7 @@ namespace Store.API.Controllers
             var products = _productsBLL.GetProducts();
 
             var productsViewModel = products.ToList()
-                .Select(p => new ProductViewModel(p.Name, p.Description, p.Price, p.Color)
+                .Select(p => new ProductViewModel(p.Name, p.Description, p.Price, p.Color, p.ProductCode)
                 {
                     Sizes = _mapper.Map<List<ProductSize>, List<ProductSizeViewModel>>(p.Sizes),
                     Qty = p.Sizes.Sum(s => s.Qty),
@@ -88,7 +88,7 @@ namespace Store.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!_productsBLL.ProductExists(id))
                 {
                     return NotFound();
                 }
@@ -130,11 +130,6 @@ namespace Store.API.Controllers
             _productsBLL.DeleteProduct(product);
 
             return Ok();
-        }
-
-        private bool ProductExists(int id)
-        {
-            return _productsBLL.GetProductById(id) != null;
         }
     }
 }

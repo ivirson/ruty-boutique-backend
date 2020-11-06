@@ -26,6 +26,7 @@ namespace Store.Models.Domain
         public string Description { get; private set; }
         public decimal Price { get; private set; }
         public string Color { get; private set; }
+        public string ProductCode { get; set; }
         public StatusEnum Status { get; private set; }
         public List<ProductSize> Sizes { get; set; }
         public List<ProductCategory> Categories { get; set; }
