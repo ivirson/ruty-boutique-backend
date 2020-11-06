@@ -18,7 +18,7 @@ namespace Store.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductRating> ProductRatings { get; set; }
-        public DbSet<ProductLog> ProductLogs { get; set; }
+        public DbSet<ActionLog> ActionLogs { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
         public DbSet<ProductSize> ProductSizes { get; set; }
 

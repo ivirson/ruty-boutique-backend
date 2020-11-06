@@ -10,8 +10,8 @@ using Store.Data;
 namespace Store.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201105125153_error-log-added")]
-    partial class errorlogadded
+    [Migration("20201106140950_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,42 @@ namespace Store.Data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Store.Models.Audit.ActionLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Entity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("EntityId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActionLogs");
+                });
 
             modelBuilder.Entity("Store.Models.Audit.ErrorLog", b =>
                 {
@@ -48,31 +84,6 @@ namespace Store.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ErrorLogs");
-                });
-
-            modelBuilder.Entity("Store.Models.Audit.ProductLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductLogs");
                 });
 
             modelBuilder.Entity("Store.Models.Core.User", b =>
@@ -145,9 +156,6 @@ namespace Store.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Qty")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -181,6 +189,9 @@ namespace Store.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
@@ -188,8 +199,42 @@ namespace Store.Data.Migrations
                     b.ToTable("ProductRatings");
                 });
 
-            modelBuilder.Entity("Store.Models.Audit.ErrorLog", b =>
+            modelBuilder.Entity("Store.Models.Domain.ProductSize", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(3)")
+                        .HasMaxLength(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductSizes");
+                });
+
+            modelBuilder.Entity("Store.Models.Audit.ActionLog", b =>
+                {
+                    b.HasOne("Store.Models.Domain.Category", null)
+                        .WithMany("Log")
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("Store.Models.Domain.Product", "Product")
+                        .WithMany("Log")
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Store.Models.Core.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -197,14 +242,8 @@ namespace Store.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Store.Models.Audit.ProductLog", b =>
+            modelBuilder.Entity("Store.Models.Audit.ErrorLog", b =>
                 {
-                    b.HasOne("Store.Models.Domain.Product", "Product")
-                        .WithMany("Log")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Store.Models.Core.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -231,6 +270,15 @@ namespace Store.Data.Migrations
                 {
                     b.HasOne("Store.Models.Domain.Product", "Product")
                         .WithMany("Ratings")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Store.Models.Domain.ProductSize", b =>
+                {
+                    b.HasOne("Store.Models.Domain.Product", "Product")
+                        .WithMany("Sizes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Store.BLL.Audit;
-using Store.Models.Audit;
 
 namespace Store.API.Controllers
 {
@@ -24,10 +21,10 @@ namespace Store.API.Controllers
         /// </summary>
         /// <returns>Returns the Error Log list</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErrorLog>>> GetLog(DateTime? initialDate, DateTime? finalDate)
+        public IActionResult GetLog(DateTime? initialDate, DateTime? finalDate)
         {
-            var log = await _errorLogBLL.GetErrorLog(initialDate, finalDate);
-            return log;
+            var log = _errorLogBLL.GetErrorLog(initialDate, finalDate);
+            return Ok(log);
         }
     }
 }

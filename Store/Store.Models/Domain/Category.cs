@@ -1,4 +1,5 @@
-﻿using Store.Models.Enums;
+﻿using Store.Models.Audit;
+using Store.Models.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -11,6 +12,7 @@ namespace Store.Models.Domain
             Name = name;
             Color = color;
             Status = StatusEnum.ACTIVE;
+            Log = new List<ActionLog>();
         }
 
         // PROPERTIES
@@ -19,6 +21,7 @@ namespace Store.Models.Domain
         public string Color { get; private set; }
         public List<ProductCategory> Products { get; private set; }
         public StatusEnum Status { get; private set; }
+        public List<ActionLog> Log { get; private set; }
 
         // METHODS
         public void SetInactive()

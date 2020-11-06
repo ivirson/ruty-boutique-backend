@@ -1,11 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Store.Data;
+﻿using Store.Data;
 using Store.Models.Audit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Store.BLL.Audit
 {
@@ -18,7 +16,7 @@ namespace Store.BLL.Audit
             _context = context;
         }
 
-        public async Task<List<ErrorLog>> GetErrorLog(DateTime? initialDate, DateTime? finalDate)
+        public List<ErrorLog> GetErrorLog(DateTime? initialDate, DateTime? finalDate)
         {
             var log = new List<ErrorLog>();
             if (finalDate == null)
@@ -28,21 +26,21 @@ namespace Store.BLL.Audit
 
             if (initialDate == null)
             {
-                log =  await _context.ErrorLogs.Where(e => e.Date <= finalDate).ToListAsync();
+                log = _context.ErrorLogs.Where(e => e.Date <= finalDate).ToList();
             }
             else
             {
-                log = await _context.ErrorLogs.Where(e => e.Date >= initialDate && e.Date <= finalDate).ToListAsync();
+                log = _context.ErrorLogs.Where(e => e.Date >= initialDate && e.Date <= finalDate).ToList();
             }
             return log;
         }
 
-        public async Task CreateErrorLogEvent(Exception exception, MethodBase calledMethod)
+        public void CreateErrorLogEvent(Exception exception, MethodBase calledMethod)
         {
             var userId = 1;
-            var error = new ErrorLog(userId, exception.Message, exception.StackTrace, calledMethod.DeclaringType.ReflectedType.FullName);
+            var error = new ErrorLog(userId, exception.Message, exception.StackTrace, String.Concat(calledMethod.DeclaringType.FullName, ".", calledMethod.Name));
             _context.ErrorLogs.Add(error);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }

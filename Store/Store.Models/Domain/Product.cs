@@ -17,7 +17,7 @@ namespace Store.Models.Domain
             Sizes = new List<ProductSize>();
             Categories = new List<ProductCategory>();
             Ratings = new List<ProductRating>();
-            Log = new List<ProductLog>();
+            Log = new List<ActionLog>();
         }
 
         // PROPERTIES
@@ -30,7 +30,7 @@ namespace Store.Models.Domain
         public StatusEnum Status { get; private set; }
         public List<ProductCategory> Categories { get; private set; }
         public List<ProductRating> Ratings { get; private set; }
-        public List<ProductLog> Log { get; private set; }
+        public List<ActionLog> Log { get; private set; }
 
         // METHODS
         public void SetInactive()

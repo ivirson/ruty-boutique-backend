@@ -11,85 +11,61 @@ using System.Linq;
 
 namespace Store.BLL.Domain
 {
-    public class ProductsBLL
+    public class CategoryBLL
     {
         private readonly DataContext _context;
         private readonly ErrorLogBLL _errorLogBLL;
         private readonly ActionLogBLL _actionLogBLL;
-        private readonly CategoryBLL _categoryBLL;
 
-        public ProductsBLL(DataContext context, ErrorLogBLL errorLogBLL, ActionLogBLL actionLogBLL, CategoryBLL categoryBLL)
+        public CategoryBLL(DataContext context, ErrorLogBLL errorLogBLL)
         {
             _context = context;
             _errorLogBLL = errorLogBLL;
-            _actionLogBLL = actionLogBLL;
-            _categoryBLL = categoryBLL;
         }
 
-        public List<Product> GetProducts()
+        public List<Category> GetCategories()
         {
-            List<Product> products = null;
+            List<Category> categories = null;
             try
             {
-                products = _context.Products
-                    .Include(p => p.Categories)
-                    .Include(p => p.Log)
-                    .Include(p => p.Ratings)
-                    .Include(p => p.Sizes)
+                categories = _context.Categories
                     .Where(p => p.Status == StatusEnum.ACTIVE)
                     .ToList();
-
-                foreach (var item in products)
-                {
-                    foreach (var categ in item.Categories)
-                    {
-                        categ.Category = _categoryBLL.GetCategoryById(categ.CategoryId);
-                    }
-                }
             }
             catch (Exception ex)
             {
                 _errorLogBLL.CreateErrorLogEvent(ex, new StackTrace(1, false).GetFrame(0).GetMethod());
             }
 
-            return products;
+            return categories;
         }
 
-        public Product GetProductById(int id)
+        public Category GetCategoryById(int id)
         {
-            Product product = null;
+            Category category = null;
             try
             {
-                product = _context.Products
-                    .Include(p => p.Categories)
-                    .Include(p => p.Log)
-                    .Include(p => p.Ratings)
-                    .Include(p => p.Sizes)
+                category = _context.Categories
                     .Where(p => p.Status == StatusEnum.ACTIVE)
                     .SingleOrDefault(p => p.Id == id);
-
-                foreach (var item in product.Categories)
-                {
-                    item.Category = _categoryBLL.GetCategoryById(item.CategoryId);
-                }
             }
             catch (Exception ex)
             {
                 _errorLogBLL.CreateErrorLogEvent(ex, new StackTrace(1, false).GetFrame(0).GetMethod());
             }
 
-            return product;
+            return category;
         }
 
-        public void CreateProduct(Product product)
+        public void CreateCategory(Category category)
         {
             var userId = 1;
             try
             {
-                _context.Products.Add(product);
+                _context.Categories.Add(category);
                 _context.SaveChanges();
                 _actionLogBLL.CreateLogEvent(
-                    new ActionLog(product.Id, userId, LogTypeEnum.CREATE, EntitiesEnum.PRODUCT)
+                    new ActionLog(category.Id, userId, LogTypeEnum.CREATE, EntitiesEnum.CATEGORY)
                 );
             }
             catch (Exception ex)
@@ -99,16 +75,16 @@ namespace Store.BLL.Domain
             
         }
 
-        public void UpdateProduct(Product product)
+        public void UpdateCategory(Category category)
         {
             var userId = 1;
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(category).State = EntityState.Modified;
 
             try
             {
                 _context.SaveChanges();
                 _actionLogBLL.CreateLogEvent(
-                    new ActionLog(product.Id, userId, LogTypeEnum.UPDATE, EntitiesEnum.PRODUCT)
+                    new ActionLog(category.Id, userId, LogTypeEnum.UPDATE, EntitiesEnum.CATEGORY)
                 );
             }
             catch (Exception ex)
@@ -117,15 +93,15 @@ namespace Store.BLL.Domain
             }
         }
 
-        public void DeleteProduct(Product product)
+        public void DeleteCategory(Category category)
         {
             var userId = 1;
             try
             {
-                product.SetInactive();
+                category.SetInactive();
                 _context.SaveChanges();
                 _actionLogBLL.CreateLogEvent(
-                    new ActionLog(product.Id, userId, LogTypeEnum.DELETE, EntitiesEnum.PRODUCT)
+                    new ActionLog(category.Id, userId, LogTypeEnum.DELETE, EntitiesEnum.CATEGORY)
                 );
             }
             catch (Exception ex)

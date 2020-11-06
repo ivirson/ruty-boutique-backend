@@ -19,8 +19,8 @@ namespace Store.Data.Configuration
 
             builder
                .HasMany(p => p.Log)
-               .WithOne(pl => pl.Product)
-               .HasForeignKey(pl => pl.ProductId)
+               .WithOne(al => al.Product)
+               .HasForeignKey(al => al.EntityId)
                .OnDelete(DeleteBehavior.Restrict);
 
             builder

@@ -52,8 +52,9 @@ namespace Store.API
 
             services.AddScoped<DataContext>();
             services.AddScoped<ProductsBLL>();
+            services.AddScoped<CategoryBLL>();
             services.AddScoped<ErrorLogBLL>();
-            services.AddScoped<ProductLogBLL>();
+            services.AddScoped<ActionLogBLL>();
 
             AutoMapperConfig(services);
         }
@@ -88,8 +89,17 @@ namespace Store.API
         {
             var mapperConfiguration = new MapperConfiguration(config =>
             {
-                config.CreateMap<Product, ProductViewModel>();
+                config.CreateMap<Product, ProductViewModel>()
+                    .ForMember(
+                        dest => dest.Categories,
+                        opt => opt.MapFrom(src => src.Categories)
+                    )
+                    .ForMember(
+                        dest => dest.Sizes,
+                        opt => opt.MapFrom(src => src.Sizes)
+                    );
                 config.CreateMap<Category, CategoryViewModel>();
+                config.CreateMap<ProductCategory, ProductCategoryViewModel>();
                 config.CreateMap<ProductSize, ProductSizeViewModel>();
             });
 

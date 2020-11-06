@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,17 +28,20 @@ namespace Store.API.Controllers
         /// </summary>
         /// <returns>Returns the Product list</returns>
         [HttpGet]
-        public async Task<ActionResult<List<ProductViewModel>>> GetProducts()
+        public IActionResult GetProducts()
         {
-            var products = await _productsBLL.GetProducts();
-            var productsViewModel = _mapper.Map<List<ProductViewModel>>(products);
+            var products = _productsBLL.GetProducts();
 
-            foreach (var item in productsViewModel)
-            {
-                item.Categories = _mapper.Map<List<CategoryViewModel>>(item.Categories);
-                item.Sizes = _mapper.Map<List<ProductSizeViewModel>>(item.Sizes);
-            }
-            return productsViewModel;
+            var productsViewModel = products.ToList()
+                .Select(p => new ProductViewModel(p.Name, p.Description, p.Price, p.Color)
+                {
+                    Sizes = _mapper.Map<List<ProductSize>, List<ProductSizeViewModel>>(p.Sizes),
+                    Qty = p.Sizes.Sum(s => s.Qty),
+                    Rating = p.Ratings.Count,
+                    Categories = _mapper.Map<List<ProductCategory>, List<ProductCategoryViewModel>>(p.Categories),
+                });
+
+            return Ok(productsViewModel);
         }
 
         // GET: api/Products/5
@@ -48,16 +51,18 @@ namespace Store.API.Controllers
         /// <param name="id">Product Id</param>
         /// <returns>Return an specific Product with Id equals to id parameter</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public IActionResult GetProduct(int id)
         {
-            var product = await _productsBLL.GetProductById(id);
+            var product = _productsBLL.GetProductById(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return product;
+            var productViewModel = _mapper.Map<Product, ProductViewModel>(product);
+
+            return Ok(productViewModel);
         }
 
         // PUT: api/Products/5
@@ -68,7 +73,7 @@ namespace Store.API.Controllers
         /// <param name="product"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public IActionResult PutProduct(int id, Product product)
         {
             if (id != product.Id)
             {
@@ -97,7 +102,7 @@ namespace Store.API.Controllers
         /// <param name="product"></param>
         /// <returns>Return the created product</returns>
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public IActionResult PostProduct(Product product)
         {
             _productsBLL.CreateProduct(product);
 
@@ -111,9 +116,9 @@ namespace Store.API.Controllers
         /// <param name="id"></param>
         /// <returns>Return the inactivated product</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        public IActionResult DeleteProduct(int id)
         {
-            var product = await _productsBLL.GetProductById(id);
+            var product = _productsBLL.GetProductById(id);
             if (product == null)
             {
                 return NotFound();
@@ -121,7 +126,7 @@ namespace Store.API.Controllers
 
             _productsBLL.DeleteProduct(product);
 
-            return product;
+            return Ok(product);
         }
 
         private bool ProductExists(int id)

@@ -19,6 +19,42 @@ namespace Store.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Store.Models.Audit.ActionLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Entity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("EntityId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActionLogs");
+                });
+
             modelBuilder.Entity("Store.Models.Audit.ErrorLog", b =>
                 {
                     b.Property<int>("Id")
@@ -46,34 +82,6 @@ namespace Store.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ErrorLogs");
-                });
-
-            modelBuilder.Entity("Store.Models.Audit.ProductLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductLogs");
                 });
 
             modelBuilder.Entity("Store.Models.Core.User", b =>
@@ -179,6 +187,9 @@ namespace Store.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
@@ -210,8 +221,18 @@ namespace Store.Data.Migrations
                     b.ToTable("ProductSizes");
                 });
 
-            modelBuilder.Entity("Store.Models.Audit.ErrorLog", b =>
+            modelBuilder.Entity("Store.Models.Audit.ActionLog", b =>
                 {
+                    b.HasOne("Store.Models.Domain.Category", null)
+                        .WithMany("Log")
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("Store.Models.Domain.Product", "Product")
+                        .WithMany("Log")
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Store.Models.Core.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -219,14 +240,8 @@ namespace Store.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Store.Models.Audit.ProductLog", b =>
+            modelBuilder.Entity("Store.Models.Audit.ErrorLog", b =>
                 {
-                    b.HasOne("Store.Models.Domain.Product", "Product")
-                        .WithMany("Log")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Store.Models.Core.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")

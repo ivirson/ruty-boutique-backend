@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Store.Data.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,7 +31,6 @@ namespace Store.Data.Migrations
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Price = table.Column<decimal>(nullable: false),
-                    Qty = table.Column<int>(nullable: false),
                     Color = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false)
                 },
@@ -87,7 +87,8 @@ namespace Store.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(nullable: false)
+                    ProductId = table.Column<int>(nullable: false),
+                    Rating = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,26 +102,79 @@ namespace Store.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductLogs",
+                name: "ProductSizes",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    Type = table.Column<int>(nullable: false)
+                    Size = table.Column<string>(maxLength: 3, nullable: true),
+                    Qty = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductLogs", x => x.Id);
+                    table.PrimaryKey("PK_ProductSizes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductLogs_Products_ProductId",
+                        name: "FK_ProductSizes_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ActionLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EntityId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    Entity = table.Column<int>(nullable: false),
+                    Type = table.Column<int>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActionLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductLogs_Users_UserId",
+                        name: "FK_ActionLogs_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ActionLogs_Products_EntityId",
+                        column: x => x.EntityId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ActionLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ErrorLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    Message = table.Column<string>(nullable: true),
+                    StackTrace = table.Column<string>(nullable: true),
+                    CalledMethod = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ErrorLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ErrorLogs_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -128,42 +182,63 @@ namespace Store.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ActionLogs_CategoryId",
+                table: "ActionLogs",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActionLogs_EntityId",
+                table: "ActionLogs",
+                column: "EntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActionLogs_UserId",
+                table: "ActionLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ErrorLogs_UserId",
+                table: "ErrorLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductCategories_CategoryId",
                 table: "ProductCategories",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLogs_ProductId",
-                table: "ProductLogs",
+                name: "IX_ProductRatings_ProductId",
+                table: "ProductRatings",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLogs_UserId",
-                table: "ProductLogs",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductRatings_ProductId",
-                table: "ProductRatings",
+                name: "IX_ProductSizes_ProductId",
+                table: "ProductSizes",
                 column: "ProductId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductCategories");
+                name: "ActionLogs");
 
             migrationBuilder.DropTable(
-                name: "ProductLogs");
+                name: "ErrorLogs");
+
+            migrationBuilder.DropTable(
+                name: "ProductCategories");
 
             migrationBuilder.DropTable(
                 name: "ProductRatings");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "ProductSizes");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Products");
